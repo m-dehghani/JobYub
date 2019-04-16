@@ -33,7 +33,7 @@ namespace JobYub.Controllers
         public async Task<ActionResult<City>> GetCity(int id)
         {
             var city = await _context.City.FindAsync(id);
-
+            ////////////////////////
             if (city == null)
             {
                 return NotFound();
