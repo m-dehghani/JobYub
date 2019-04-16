@@ -36,7 +36,7 @@ namespace JobYub.Models
 
 		public string TagIDs { get; set; }
 
-		public int Experience { get; set; }
+		public int? Experience { get; set; }
 
 		[StringLength(11, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 11)]
 		public string PhoneNumber { get; set; }
@@ -44,25 +44,25 @@ namespace JobYub.Models
 
                                            //	public int MajorId { get; set; }
 
-        public CollaborationType CollaborationType { get; set; }
+        public CollaborationType? CollaborationType { get; set; }
 
-		public int MinSalary { get; set; }
+		public int? MinSalary { get; set; }
 
-		public int MaxSalary { get; set; }
+		public int? MaxSalary { get; set; }
        
         public virtual List<AdvertisementEducationLevel> AdvertisementEducationLevels {set;get;}
 
-		public Int16 Age { get; set; }
+		public Int16? Age { get; set; }
         public int? MaxAge { get; set; }
         public int? MinAge { get; set; }
 
         public Gender Gender { get; set; }
 
-		public double Longitude { get; set; }
+		public double? Longitude { get; set; }
 
-		public double Latitude { get; set; }
+		public double? Latitude { get; set; }
 
-		public virtual int JobCategoryID { get; set; }
+		public virtual int? JobCategoryID { get; set; }
 
 		public virtual JobCategory JobCategory { get; set; }
 
@@ -88,7 +88,7 @@ namespace JobYub.Models
 
 		public string ReportsDesc { get; set; }
 
-		public int ReportNum { get; set; }
+		public int? ReportNum { get; set; }
 
 		public bool? Graduated { get; set; }
 

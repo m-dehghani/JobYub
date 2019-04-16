@@ -42,7 +42,7 @@ namespace JobYub.Controllers
             //if (!HttpContext.User.IsInRole("Administrators") && !HttpContext.User.IsInRole("Moderators"))
             //	adsvertisements=_context.Advertisement.Where(a => a.ApplicationUserID == HttpContext.User.Identity.Name).AsQueryable();
 
-            IQueryable<Advertisement> res = _context.Advertisement.Include(s => s.City).Include(s => s.Tarrif).Include(s => s.Region).Include(s => s.AdvertisementMajors).Include(s => s.AdvertisementEducationLevels);
+            IQueryable<Advertisement> res = _context.Advertisement.Include(s => s.City).Include(s => s.Tarrif).Include(s => s.Region).Include(s => s.AdvertisementMajors).Include(s => s.AdvertisementEducationLevels).OrderBy(s=>s.StartDate);
             res = User.IsInRole("Administrators") ? res : res.Where(s => s.status == Status.confirmed);
             if (cityId != null && cityId != 0)
                 res = res.Where(a => a.CityID == cityId);
@@ -63,13 +63,23 @@ namespace JobYub.Controllers
             // result = await result.FirstOrDefaultAsync(a => a.ID == id);
 
             var advertisement = await result.FirstOrDefaultAsync(a => a.ID == id);
-            if ((advertisement.status != Status.confirmed && User.IsInRole("Adminstrators") == false) || advertisement == null)
+            if((advertisement.ApplicationUserID==User.Identity.Name|| User.IsInRole("Adminstrators")) &&advertisement!=null)
             {
 
+                return advertisement;
+            }
+
+            else if (!User.IsInRole("Adminstrators")&&(advertisement.status==Status.confirmed) && advertisement != null)
+            {
+
+                return advertisement;
+            }
+            else
+            {
                 return NotFound();
             }
 
-            return advertisement;
+            
         }
 
 
