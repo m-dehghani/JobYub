@@ -86,6 +86,7 @@ namespace JobYub.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<City>> DeleteCity(int id)
         {
+            ///////////////////////////erfefefererf
             var city = await _context.City.FindAsync(id);
             if (city == null)
             {
