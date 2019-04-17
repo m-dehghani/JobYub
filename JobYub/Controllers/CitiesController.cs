@@ -15,7 +15,7 @@ namespace JobYub.Controllers
     public class CitiesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-
+       
         public CitiesController(ApplicationDbContext context)
         {
             _context = context;
@@ -25,6 +25,7 @@ namespace JobYub.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<City>>> GetCity()
         {
+            
             return await _context.City.ToListAsync();
         }
 
@@ -55,6 +56,7 @@ namespace JobYub.Controllers
 
             try
             {
+                
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)

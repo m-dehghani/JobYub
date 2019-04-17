@@ -106,24 +106,27 @@ namespace JobYub.Controllers
             {
                 return BadRequest();
             }
+            Advertisement adInDb = await _context.Advertisement.FirstOrDefaultAsync(a => a.ID == advertisement.ID);
+           // ApplicationUser u = _context.ApplicationUser.Where(h => h.Id == User.Identity.Name).Include(g => g.Advertisements).FirstOrDefault();
+            if (adInDb == null)
+                return NotFound();
 
             if (!User.IsInRole("Administrators"))
             {
-
-                ApplicationUser u = _context.ApplicationUser.Find(User.Identity.Name);
-                if (u.Advertisements.Contains(advertisement))
+              
+                if ( adInDb.ApplicationUserID != User.Identity.Name)
                 {
-                    advertisement.ApplicationUser = u;
-                }
-                else
-                {
+                   
+               
                     return Unauthorized();
                 }
             }
-            _context.Entry(advertisement).State = EntityState.Modified;
 
+            _context.Entry(adInDb).State = EntityState.Detached;
             try
             {
+
+                _context.Entry(advertisement).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
                 //advertisement.a
                 _context.AdvertisementMajors.RemoveRange(_context.AdvertisementMajors.Where(adm => adm.AdvertisementID == advertisement.ID));

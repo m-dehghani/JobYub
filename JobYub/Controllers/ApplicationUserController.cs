@@ -107,9 +107,9 @@ namespace JobYub.Controllers
 			public string RawTextResume { get; set; }
 
 			public bool IsPublic { get; set; }
-
-			//public Advertisement[] ad
-		}
+            public Gender Gender { get; set; }
+                                               //public Advertisement[] ad
+        }
 
 
 		//Edit user profile
@@ -124,7 +124,8 @@ namespace JobYub.Controllers
 			{
 
 				var ApUser = await _context.ApplicationUser.FindAsync( Input.ID);
-				ApUser.FirstName = Input.FirstName;
+                ApUser.Gender = Input.Gender;
+                ApUser.FirstName = Input.FirstName;
 				ApUser.LastName = Input.LastName;
 				ApUser.Website = Input.Website;
 				ApUser.BirthDate = Input.BirthDate;

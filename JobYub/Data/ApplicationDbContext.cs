@@ -63,9 +63,10 @@ namespace JobYub.Data
 
             builder.Entity<AdvertisementMajor>().HasKey(am => new { am.AdvertisementID, am.MajorID });
             builder.Entity<AdvertisementEducationLevel>().HasKey(ae => new { ae.AdvertisementID, ae.EducationLevelID });
+            builder.Entity<AdvertisementCompanyType>().HasKey(ae => new { ae.AdvertisementID, ae.CompanyTypetID });
 
-       
-    }
+
+        }
         public DbSet<JobYub.Models.City> City { get; set; }
         public DbSet<JobYub.Models.Advertisement> Advertisement { get; set; }
         public DbSet<JobYub.Models.CompanyType> CompanyType { get; set; }
@@ -81,7 +82,8 @@ namespace JobYub.Data
         public DbSet<EducationLevel> EducationLevel { get; set; }
         public DbSet<AdvertisementEducationLevel> AdvertisementEducationLevels { get; set; }
         public DbSet<AdvertisementMajor> AdvertisementMajors { get; set; }
+        public DbSet<AdvertisementCompanyType> AdvertisementCompanyTypes { get; set; }
 
 
-	}
+    }
 }

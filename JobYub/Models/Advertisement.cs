@@ -43,15 +43,12 @@ namespace JobYub.Models
         public string SalaryType { get; set; }
 
                                            //	public int MajorId { get; set; }
-
         public CollaborationType? CollaborationType { get; set; }
 
 		public int? MinSalary { get; set; }
 
 		public int? MaxSalary { get; set; }
-       
         public virtual List<AdvertisementEducationLevel> AdvertisementEducationLevels {set;get;}
-
 		public Int16? Age { get; set; }
         public int? MaxAge { get; set; }
         public int? MinAge { get; set; }
@@ -97,8 +94,8 @@ namespace JobYub.Models
 		public virtual ApplicationUser ApplicationUser { get; set; }
 
 		public virtual List<AdvertisementMajor> AdvertisementMajors { get; set; }
-
-		[Required]
+        public virtual List<AdvertisementCompanyType> AdvertisementCompanyTypes { get; set; }
+        [Required]
 		public  AdvertisementType advertisementType {get;set;}
         //public int MajorID { get; set; }
         //public Major Major { get; set; }
