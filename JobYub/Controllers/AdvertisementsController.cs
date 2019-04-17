@@ -58,7 +58,7 @@ namespace JobYub.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Advertisement>> GetAdvertisement(int id)
 		{
-            var result = _context.Advertisement.Include(a => a.City).Include(a => a.ApplicationUser).ThenInclude(u => u.CompanyType).Include(a => a.JobCategory).Include(a => a.Payment).Include(a => a.Region).Include(a => a.Tarrif).Include(a => a.AdvertisementEducationLevels).ThenInclude(ael => ael.EducationLevel).Include(a => a.AdvertisementMajors).ThenInclude(am => am.Major);
+            var result = _context.Advertisement.Include(a => a.City).Include(a => a.ApplicationUser).ThenInclude(u => u.CompanyType).Include(a => a.JobCategory).Include(a => a.Payment).Include(a => a.Region).Include(a => a.Tarrif).Include(a => a.AdvertisementEducationLevels).ThenInclude(ael => ael.EducationLevel).Include(a => a.AdvertisementMajors).ThenInclude(am => am.Major).Include(a => a.AdvertisementCompanyTypes).ThenInclude(ac => ac.CompanyType);
 
             // result = await result.FirstOrDefaultAsync(a => a.ID == id);
 
@@ -88,8 +88,8 @@ namespace JobYub.Controllers
 		public async Task<ActionResult<Advertisement>> PostAdvertisement(Advertisement advertisement)
 		{
 
-            ApplicationUser u = _context.ApplicationUser.Find(User.Identity.Name);
-            advertisement.ApplicationUser = u;
+            //ApplicationUser u = _context.ApplicationUser.Find(User.Identity.Name);
+            //advertisement.ApplicationUser = u;
 
             _context.Advertisement.Add(advertisement);
 
@@ -140,7 +140,12 @@ namespace JobYub.Controllers
                 //advertisement.AdvertisementEducationLevels.ForEach(ae => ae.Advertisement = advertisement);
                 if (advertisement.AdvertisementEducationLevels != null)
                     await _context.AdvertisementEducationLevels.AddRangeAsync(advertisement.AdvertisementEducationLevels);
-
+                await _context.SaveChangesAsync();
+				_context.AdvertisementCompanyTypes.RemoveRange(_context.AdvertisementCompanyTypes.Where(adc => adc.AdvertisementID == advertisement.ID));
+                await _context.SaveChangesAsync();
+                //advertisement.AdvertisementMajors.ForEach(am => am.Advertisement = advertisement);
+                if (advertisement.AdvertisementCompanyTypes != null)
+                    await _context.AdvertisementCompanyTypes.AddRangeAsync(advertisement.AdvertisementCompanyTypes);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -227,7 +232,7 @@ namespace JobYub.Controllers
                
             //IQueryable<Advertisement> res = _context.Advertisement;
 
-            var query = _context.Advertisement.Where(a=>a.status==Status.confirmed).Include(s => s.City).Include(s => s.Tarrif).Include(s => s.Region).Include(s => s.AdvertisementMajors).Include(s => s.AdvertisementEducationLevels).AsQueryable();
+            var query = _context.Advertisement.Where(a=>a.status==Status.confirmed).Include(s => s.City).Include(s => s.Tarrif).Include(s => s.Region).Include(s => s.AdvertisementMajors).Include(s => s.AdvertisementEducationLevels).Include(a => a.AdvertisementCompanyTypes).ThenInclude(ac => ac.CompanyType).AsQueryable();
             query = query.Where(a => a.status == Status.confirmed);         
             if (model.AdvertisementType != null)
                 query = query.Where(a => a.advertisementType == model.AdvertisementType);

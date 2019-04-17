@@ -11,5 +11,7 @@ namespace JobYub.Models
 		public string Name { get; set; }
 		public string Description { get; set; }
         public virtual ICollection<ApplicationUser> Users { get; set; }
-    }
+
+		public virtual ICollection<AdvertisementCompanyType> AdvertisementCompanyTypes { get; set; }
+	}
 }
