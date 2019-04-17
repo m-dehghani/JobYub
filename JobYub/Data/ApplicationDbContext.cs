@@ -63,7 +63,7 @@ namespace JobYub.Data
 
             builder.Entity<AdvertisementMajor>().HasKey(am => new { am.AdvertisementID, am.MajorID });
             builder.Entity<AdvertisementEducationLevel>().HasKey(ae => new { ae.AdvertisementID, ae.EducationLevelID });
-            builder.Entity<AdvertisementCompanyType>().HasKey(ae => new { ae.AdvertisementID, ae.CompanyTypetID });
+            builder.Entity<AdvertisementCompanyType>().HasKey(ae => new { ae.AdvertisementID, ae.CompanyTypeID });
 
 
         }
