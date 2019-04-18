@@ -58,7 +58,7 @@ namespace JobYub.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Advertisement>> GetAdvertisement(int id)
 		{
-            var result = _context.Advertisement.Include(a => a.City).Include(a => a.ApplicationUser).ThenInclude(u => u.CompanyType).Include(a => a.JobCategory).Include(a => a.Payment).Include(a => a.Region).Include(a => a.Tarrif).Include(a => a.AdvertisementEducationLevels).ThenInclude(ael => ael.EducationLevel).Include(a => a.AdvertisementMajors).ThenInclude(am => am.Major).Include(a => a.AdvertisementCompanyTypes).ThenInclude(ac => ac.CompanyType);
+            var result = _context.Advertisement.Include(a => a.City).Include(a => a.ApplicationUser).ThenInclude(u => u.CompanyType).Include(a => a.ApplicationUser).ThenInclude(u => u.City).Include(a => a.ApplicationUser).ThenInclude(u => u.Major).Include(a => a.ApplicationUser).ThenInclude(u => u.EducationLevel).Include(a => a.ApplicationUser).ThenInclude(u => u.CompanyType).Include(a => a.JobCategory).Include(a => a.Payment).Include(a => a.Region).Include(a => a.Tarrif).Include(a => a.AdvertisementEducationLevels).ThenInclude(ael => ael.EducationLevel).Include(a => a.AdvertisementMajors).ThenInclude(am => am.Major).Include(a => a.AdvertisementCompanyTypes).ThenInclude(ac => ac.CompanyType);
 
             // result = await result.FirstOrDefaultAsync(a => a.ID == id);
 
@@ -88,10 +88,10 @@ namespace JobYub.Controllers
 		public async Task<ActionResult<Advertisement>> PostAdvertisement(Advertisement advertisement)
 		{
 
-            //ApplicationUser u = _context.ApplicationUser.Find(User.Identity.Name);
-            //advertisement.ApplicationUser = u;
+			ApplicationUser u = _context.ApplicationUser.Find(HttpContext.User.Identity.Name);
+			advertisement.ApplicationUser = u;
 
-            _context.Advertisement.Add(advertisement);
+			_context.Advertisement.Add(advertisement);
 
             await _context.SaveChangesAsync();
             return CreatedAtAction("GetAdvertisement", new { id = advertisement.ID }, advertisement);
@@ -313,9 +313,18 @@ namespace JobYub.Controllers
 									//double? dd = userLocation.Distance(advertisementLocation).Value;
 									advertisementDist.Add(ads, dd);
 								}
+								else
+								{
+									advertisementDist.Add(ads, double.MaxValue);
+								}
 							}
+							advertisementDist = advertisementDist.OrderBy(a => a.Value).ToDictionary(z => z.Key, y => y.Value); 
+						
 						}
-						advertisementDist = advertisementDist.OrderBy(a => a.Value).ToDictionary(z => z.Key, y => y.Value); 
+						else
+						{
+							advertisementDist = query.OrderByDescending(a => a.StartDate).ToDictionary(x => x, x => (double?)0.0);
+						}
 						
 						break;
 					}
