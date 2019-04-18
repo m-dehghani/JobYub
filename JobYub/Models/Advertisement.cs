@@ -103,7 +103,7 @@ namespace JobYub.Models
         //public Major Major { get; set; }
 
     }
-    public enum CollaborationType {paarevaght, tamamvaght,  gharardadi }
+    public enum CollaborationType {paarevaght, tamamvaght,  gharardadi , all}
     public enum Gender { male,female,unknown}
 
 	public enum Status { waiting, confirmed, deactive, draft}
