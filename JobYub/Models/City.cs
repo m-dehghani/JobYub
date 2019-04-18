@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace JobYub.Models
@@ -15,11 +16,27 @@ namespace JobYub.Models
         public virtual ICollection<ApplicationUser> Users { get; set; }
         // public virtual  ICollection<Advertisement> Advertisements { get; set; }
         // public virtual ICollection<Region> Regions { get; set; }
-        public event EventHandler Citychanged;
-        public void OnCityChange()
+       
+       
+    }
+    public static class Extensions
+    {
+        public static string GetDescription(this Exception e)
         {
-            Citychanged(this, EventArgs.Empty);
+            var builder = new StringBuilder();
+            AddException(builder, e);
+            return builder.ToString();
+        }
+        private static void AddException(StringBuilder builder, Exception e)
+        {
+            builder.AppendLine($"Message: {e.Message}");
+            builder.AppendLine($"Stack Trace: {e.StackTrace}");
+            if (e.InnerException != null)
+            {
+                builder.AppendLine("Inner Exception");
+                AddException(builder, e.InnerException);
+            }
         }
     }
-   
+
 }

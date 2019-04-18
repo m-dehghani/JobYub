@@ -111,8 +111,9 @@ namespace JobYub.Controllers
                                                //public Advertisement[] ad
         }
 
-
+        
 		//Edit user profile
+        [HttpPut]
 		[Route("/Identity/Account/Edit")]
 		public async Task<IActionResult> EditProfile(InputModel Input)
 		{
@@ -161,7 +162,7 @@ namespace JobYub.Controllers
 				return new StatusCodeResult(400);
 			}
 		}
-
+        
 		//  api/ApplicationUser
 		[HttpPost]
 		public async Task<ActionResult<Advertisement>> findApplicationUser(ApplicationUser user)
@@ -182,6 +183,6 @@ namespace JobYub.Controllers
 				return StatusCode(500);
 			}
 		}
-
+        
 	}
 }

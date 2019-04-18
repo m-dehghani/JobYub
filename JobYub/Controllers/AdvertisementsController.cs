@@ -15,7 +15,7 @@ using GeoCoordinatePortable;
 namespace JobYub.Controllers
 {
     [Route("api/[controller]")]
-   // [Authorize]
+    [Authorize]
     [ApiController]
     public class AdvertisementsController : ControllerBase
     {
@@ -163,7 +163,7 @@ namespace JobYub.Controllers
             // return NoContent();
             return Ok(advertisement);
         }
-
+        
 		// POST: api/UserAdvertisements
 		[Route("/api/UserAdvertisements")]
 		[HttpPost]
@@ -183,7 +183,7 @@ namespace JobYub.Controllers
 				return StatusCode(500);
 			}
 		}
-
+        
 		// GET: api/UserAdvertisement
 		//[Route("/api/UserAdvertisement")]
 		//[HttpGet("{id}")]
@@ -225,6 +225,7 @@ namespace JobYub.Controllers
         {
             return _context.Advertisement.Any(e => e.ID == id);
         }
+        
         [HttpPost]
         [Route("/Advertisements/search")]
         public async Task<IActionResult> SearchAsync(AdvertisementSearchModel model, int page = 1 ,string orderBy="date")
@@ -331,6 +332,8 @@ namespace JobYub.Controllers
 			//return Ok(await query.ToListAsync());
 			return Ok(new { total=total, advertisments = advertisementDist.Keys, distances = advertisementDist.Values });
 		}
+        
+        [HttpPost]
         [Authorize(Roles ="Administrators")]
         [Route("/Advertisements/Confirm")]
 		public async Task<ActionResult> ConfirmAdvertisements(AdvertisementIDsModel advertisementIDs)
@@ -351,9 +354,11 @@ namespace JobYub.Controllers
 			}
 
 		}
+        
+        
         [Authorize(Roles ="Administrators")]
 		[Route("/Advertisements/Deactivate")]
-		//[HttpPost]
+		[HttpPost]
 		public async Task<ActionResult> DeactivateAdvertisements(AdvertisementIDsModel advertisementIDs)
 		{
 			try

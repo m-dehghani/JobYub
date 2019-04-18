@@ -14,13 +14,14 @@ using JobYub.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using JobYub.Models;
-using Swashbuckle.AspNetCore.Swagger;
+
 using Microsoft.AspNetCore.Identity.UI.Services;
 using JobYub.Helpers;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace JobYub
 {
@@ -40,8 +41,8 @@ namespace JobYub
             services.AddCors();
             services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
     {
-                options.User.RequireUniqueEmail = false;
-            })
+        options.User.RequireUniqueEmail = false;
+    })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultUI(UIFramework.Bootstrap4)
     .AddDefaultTokenProviders();
@@ -56,11 +57,11 @@ namespace JobYub
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            
+
             //services.AddDefaultIdentity<ApplicationUser,>(options=>options.User.RequireUniqueEmail=false)
             //    .AddDefaultUI(UIFramework.Bootstrap4)
             //    .AddEntityFrameworkStores<ApplicationDbContext>();
-            
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2).AddJsonOptions(options =>
             {
                 options.SerializerSettings.ReferenceLoopHandling =
@@ -69,15 +70,14 @@ namespace JobYub
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "Jobino API", Version = "v1" });
-
             });
             IConfigurationBuilder builder = new ConfigurationBuilder()
       .SetBasePath(System.IO.Directory.GetCurrentDirectory())
       .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-          
+
             IConfigurationRoot configuration = builder.Build();
-          
-           
+
+
 
             var key = Encoding.ASCII.GetBytes(configuration.GetSection("AppSettings").GetSection("Secret").Value);
             services.AddAuthentication(x =>
@@ -97,10 +97,10 @@ namespace JobYub
                     ValidateAudience = false
                 };
             });
-           
+
             // services.AddIdentity<ApplicationUser, ApplicationRole>().AddEntityFrameworkStores<ApplicationDbContext>();
 
-           // services.AddScoped<ClaimsPrincipal, CustomClaimsPrincipal>();
+            // services.AddScoped<ClaimsPrincipal, CustomClaimsPrincipal>();
             // services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
             services.AddHealthChecks();
@@ -143,7 +143,8 @@ namespace JobYub
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Jobino API V1");
+                c.SwaggerEndpoint("http://5.160.39.151/Services/swagger/v1/swagger.json", "My API V1");
+                
             });
 
             app.UseMvc(routes =>
