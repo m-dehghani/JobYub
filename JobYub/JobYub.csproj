@@ -10,6 +10,10 @@
   <ItemGroup>
     <Compile Remove="Migrations\20190331091416_test6.cs" />
     <Compile Remove="Migrations\20190331091416_test6.Designer.cs" />
+    <Compile Remove="Migrations\20190423055220_dfgerger.cs" />
+    <Compile Remove="Migrations\20190423055220_dfgerger.Designer.cs" />
+    <Compile Remove="Migrations\20190423060433_difiueriu.cs" />
+    <Compile Remove="Migrations\20190423060433_difiueriu.Designer.cs" />
   </ItemGroup>
 
 

@@ -13,6 +13,7 @@ namespace JobYub.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+
     public class ApplicationUserController : ControllerBase
     {
 		private readonly ApplicationDbContext _context;
@@ -169,7 +170,7 @@ namespace JobYub.Controllers
 		{
 			try
 			{
-				var applicationUser = await _context.ApplicationUser.Where(u => u.Id == user.Id).Include(s => s.City).Include(s => s.EducationLevel).Include(s => s.Region).Include(s => s.Major).Include(s => s.CompanyType).FirstOrDefaultAsync();
+				var applicationUser = await _context.ApplicationUser.Where(u => u.Id == user.Id).Include(s => s.City).Include(s => s.EducationLevel).Include(s => s.Region).Include(s => s.Major).Include(s => s.CompanyType).Include(u=>u.UserRoles).FirstOrDefaultAsync();
 				
 				if (applicationUser == null)
 				{

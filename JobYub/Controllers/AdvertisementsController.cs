@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Linq.Expressions;
 using Microsoft.Spatial;
 using GeoCoordinatePortable;
+using Microsoft.AspNetCore.Identity;
 
 namespace JobYub.Controllers
 {
@@ -22,10 +23,11 @@ namespace JobYub.Controllers
        
         
         private readonly ApplicationDbContext _context;
-        public AdvertisementsController(ApplicationDbContext context)
+        private readonly UserManager<ApplicationUser> _applicationUserManager;
+        public AdvertisementsController(ApplicationDbContext context,UserManager<ApplicationUser> userManager)
         {
             _context = context;
-           
+            _applicationUserManager = userManager;
         }
 
 
@@ -343,16 +345,18 @@ namespace JobYub.Controllers
 		}
         
         [HttpPost]
-        [Authorize(Roles ="Administrators")]
+       
         [Route("/Advertisements/Confirm")]
 		public async Task<ActionResult> ConfirmAdvertisements(AdvertisementIDsModel advertisementIDs)
 		{
 			try
 			{
-				foreach (int id in advertisementIDs.AdvertisementIDs)
+                var roles = await _applicationUserManager.GetRolesAsync(_context.ApplicationUser.Find(User.Identity.Name));
+                if (!roles.Contains("Administrators")) return BadRequest("Not Authorized!");
+                foreach (int id in advertisementIDs.AdvertisementIDs)
 				{
 					var advertisement = await _context.Advertisement.FindAsync(id);
-					advertisement.status = Status.confirmed;
+					if(advertisement!=null) advertisement.status = Status.confirmed;
 				}
 				await _context.SaveChangesAsync();
 				return Ok();
@@ -365,27 +369,35 @@ namespace JobYub.Controllers
 		}
         
         
-        [Authorize(Roles ="Administrators")]
+        [Authorize]
 		[Route("/Advertisements/Deactivate")]
 		[HttpPost]
 		public async Task<ActionResult> DeactivateAdvertisements(AdvertisementIDsModel advertisementIDs)
 		{
-			try
-			{
-				foreach (int id in advertisementIDs.AdvertisementIDs)
-				{
-					var advertisement = await _context.Advertisement.FindAsync(id);
-					advertisement.status = Status.deactive;
-				}
-				await _context.SaveChangesAsync();
-				return Ok();
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(500);
-			}
+            try
+            {
+
+                var roles = await _applicationUserManager.GetRolesAsync(_context.ApplicationUser.Find(User.Identity.Name));
+                if (!roles.Contains("Administrators")) return BadRequest("Not Authorized!");
+
+                foreach (int id in advertisementIDs.AdvertisementIDs)
+                {
+                    var advertisement = await _context.Advertisement.FindAsync(id);
+                    if (advertisement != null)
+                        advertisement.status = Status.deactive;
+                }
+                await _context.SaveChangesAsync();
+                return Ok();
+
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500);
+            }
 
 		}
+        
 
     }
 }

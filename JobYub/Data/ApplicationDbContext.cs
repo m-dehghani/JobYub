@@ -14,6 +14,7 @@ namespace JobYub.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
+            
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -60,6 +61,7 @@ namespace JobYub.Data
                     .IsRequired();
             });
 
+            builder.Entity<ApplicationUserRole>().HasKey(ar => new { ar.UserId, ar.RoleId });
 
             builder.Entity<AdvertisementMajor>().HasKey(am => new { am.AdvertisementID, am.MajorID });
             builder.Entity<AdvertisementEducationLevel>().HasKey(ae => new { ae.AdvertisementID, ae.EducationLevelID });

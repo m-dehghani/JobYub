@@ -217,7 +217,7 @@ namespace JobYub.Areas.Identity.Pages.Account
                     user.VerificationCode =await _userManager.GenerateChangePhoneNumberTokenAsync(user, user.PhoneNumber);
                     await _context.SaveChangesAsync();
                     AuthMessageSender s = new AuthMessageSender();
-                    string messageToSend ="Your jobino verification code is "+ user.VerificationCode;
+                    string messageToSend ="به سامانه جامع کاریابی جابینو خوش آمدید. کد تایید شما:  "+ user.VerificationCode+"\n اپلیکیشن جابینو را می توانید از لینک زیر دانلود نمایید: \n https://medis.land";
                     await s.SendSmsAsync(user.PhoneNumber, messageToSend);
 
 					//var resul = await _signInManager.PasswordSignInAsync("a@a.com", "A@aaa1", false, lockoutOnFailure: true);
@@ -251,16 +251,18 @@ namespace JobYub.Areas.Identity.Pages.Account
         public async Task<IActionResult> OnPutAsync( string returnurl=null)
         {
             ApplicationUser user= _context.ApplicationUser.FirstOrDefault(u => u.PhoneNumber == Input.PhoneNumber);
+
+            var Roles = await _userManager.GetRolesAsync(user);
+            
             if (user != null)
             {
-
+                
 
 				if (user.VerificationCode == Input.VerificationCode && Input.VerificationCode != "")
 				{
 					user.AccessFailedCount = 0;
-					await _signInManager.SignInAsync(user, isPersistent: false);
-					string g = await _userManager.GetAuthenticationTokenAsync(user, "test", "token");
-
+					await _signInManager.SignInAsync(user, isPersistent: true);
+				
 
 					///////////////////////////////////
 					var tokenHandler = new JwtSecurityTokenHandler();
@@ -278,8 +280,10 @@ namespace JobYub.Areas.Identity.Pages.Account
 					user.Token = tokenHandler.WriteToken(token);
 					user.VerificationCode = "";
 					await _context.SaveChangesAsync();
+                    
 					////////////////////////////////////////////
-					OkObjectResult s = new OkObjectResult(new { Token=user.Token,ID=user.Id});
+                    
+					OkObjectResult s = new OkObjectResult(new { Token=user.Token,ID=user.Id,Roles = await _userManager.GetRolesAsync(user) });
                     return s;
                     
                 }
