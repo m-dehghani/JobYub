@@ -18,8 +18,9 @@ namespace JobYub.Models
             
             var now = DateTime.Now; PersianCalendar pc = new PersianCalendar(); Date = string.Format("{0}/{1}/{2}-{3}:{4}:{5}", pc.GetYear(now), pc.GetMonth(now), pc.GetDayOfMonth(now),pc.GetHour(now),pc.GetMinute(now),pc.GetSecond(now));
             StartDate = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-           // StartDate = now.ToLongTimeString();
-
+            //EndDate = now.AddDays(30);
+            // StartDate = now.ToLongTimeString();
+            //if (now.Subtract(EndDate).Hours <= 0) { status = Status.deactive; }
         }
 
 		public int ID { get; set; }
@@ -30,11 +31,12 @@ namespace JobYub.Models
 
 		[StringLength(1000, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 0)]
 		public string Description { get; set; }
-        public string Date { get;  }
+        [StringLength(20)]
+        public  string Date { get; set; }
        
         public long StartDate { get; set; }
 
-		public string EndDate { get; set; }
+		public  string EndDate { get; set; }
 
 		public string TagIDs { get; set; }
 
@@ -106,7 +108,7 @@ namespace JobYub.Models
     public enum CollaborationType {paarevaght, tamamvaght,  gharardadi , all}
     public enum Gender { male,female,unknown}
 
-	public enum Status { waiting, confirmed, deactive, draft}
+	public enum Status { waiting, confirmed, deactive, draft, Deleted}
 
 	public enum AdvertisementType { employerAdds, employeeAdds }
     

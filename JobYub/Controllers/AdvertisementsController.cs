@@ -42,10 +42,12 @@ namespace JobYub.Controllers
             //var bbb = HttpContext.User.IsInRole("MODERATORS");
             //var aaa = HttpContext.User.IsInRole("Administrators");
             //if (!HttpContext.User.IsInRole("Administrators") && !HttpContext.User.IsInRole("Moderators"))
-            //	adsvertisements=_context.Advertisement.Where(a => a.ApplicationUserID == HttpContext.User.Identity.Name).AsQueryable();
+            //adsvertisements=_context.Advertisement.Where(a => a.ApplicationUserID == HttpContext.User.Identity.Name).AsQueryable();
 
             IQueryable<Advertisement> res = _context.Advertisement.Include(s => s.City).Include(s => s.Tarrif).Include(s => s.Region).Include(s => s.AdvertisementMajors).Include(s => s.AdvertisementEducationLevels).OrderBy(s=>s.StartDate);
-            res = User.IsInRole("Administrators") ? res : res.Where(s => s.status == Status.confirmed);
+            
+            res = User.IsInRole("Administrators") ? res : res.Where(s => s.status == Status.confirmed||s.ApplicationUserID==User.Identity.Name);
+
             if (cityId != null && cityId != 0)
                 res = res.Where(a => a.CityID == cityId);
             List<Advertisement> result = await res.Skip((page - 1) * 15).Take(15).ToListAsync();
@@ -65,13 +67,13 @@ namespace JobYub.Controllers
             // result = await result.FirstOrDefaultAsync(a => a.ID == id);
 
             var advertisement = await result.FirstOrDefaultAsync(a => a.ID == id);
-            if((advertisement.ApplicationUserID==User.Identity.Name|| User.IsInRole("Adminstrators")) &&advertisement!=null)
+            if((advertisement.ApplicationUserID == User.Identity.Name|| User.IsInRole("Adminstrators")) && advertisement!=null)
             {
 
                 return advertisement;
             }
 
-            else if (!User.IsInRole("Adminstrators")&&(advertisement.status==Status.confirmed) && advertisement != null)
+            else if (!User.IsInRole("Adminstrators") && (advertisement.status==Status.confirmed) && advertisement != null)
             {
 
                 return advertisement;
@@ -148,6 +150,7 @@ namespace JobYub.Controllers
                 //advertisement.AdvertisementMajors.ForEach(am => am.Advertisement = advertisement);
                 if (advertisement.AdvertisementCompanyTypes != null)
                     await _context.AdvertisementCompanyTypes.AddRangeAsync(advertisement.AdvertisementCompanyTypes);
+                advertisement.status = Status.waiting;
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -176,7 +179,7 @@ namespace JobYub.Controllers
 				var advertisement = await _context.Advertisement.Where(a => a.ApplicationUserID == user.Id).Include(a => a.City).Include(a => a.JobCategory).Include(a => a.Payment).Include(a => a.Tarrif).ToListAsync();
 				if (advertisement != null)
 				{
-					return Ok(advertisement);
+					return Ok(new { advertisement, advertisement.Count });
 				}
 				return NotFound();
 			}
@@ -217,7 +220,8 @@ namespace JobYub.Controllers
                 return NotFound();
             }
 
-            _context.Advertisement.Remove(advertisement);
+            advertisement.status = Status.Deleted;
+          //  _context.Advertisement.Remove(advertisement);
             await _context.SaveChangesAsync();
 
             return advertisement;
@@ -376,15 +380,23 @@ namespace JobYub.Controllers
 		{
             try
             {
-
+                
                 var roles = await _applicationUserManager.GetRolesAsync(_context.ApplicationUser.Find(User.Identity.Name));
-                if (!roles.Contains("Administrators")) return BadRequest("Not Authorized!");
 
+               
                 foreach (int id in advertisementIDs.AdvertisementIDs)
                 {
+
                     var advertisement = await _context.Advertisement.FindAsync(id);
-                    if (advertisement != null)
-                        advertisement.status = Status.deactive;
+                    if (advertisement.ApplicationUserID == User.Identity.Name || roles.Contains("Administrators"))
+                    {
+                        if (advertisement != null)
+                            advertisement.status = Status.deactive;
+                    }
+                    else
+                    {
+                        return Unauthorized();
+                    }
                 }
                 await _context.SaveChangesAsync();
                 return Ok();
