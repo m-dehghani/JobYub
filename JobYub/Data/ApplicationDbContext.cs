@@ -61,14 +61,24 @@ namespace JobYub.Data
                     .IsRequired();
             });
 
-            builder.Entity<ApplicationUserRole>().HasKey(ar => new { ar.UserId, ar.RoleId });
+            builder.Entity<ApplicationUserRole>(userRole =>
+            {
+                userRole.HasKey(ur => new { ur.UserId, ur.RoleId });
+                userRole.HasOne(ur => ur.Role)
+                .WithMany(r => r.UserRoles)
+                .HasForeignKey(ur => ur.RoleId)
+                .IsRequired();
+                userRole.HasOne(ur => ur.User)
+                .WithMany(r => r.UserRoles)
+                .HasForeignKey(ur => ur.UserId)
+                .IsRequired();
+            });
+                builder.Entity<AdvertisementMajor>().HasKey(am => new { am.AdvertisementID, am.MajorID });
+                builder.Entity<AdvertisementEducationLevel>().HasKey(ae => new { ae.AdvertisementID, ae.EducationLevelID });
+                builder.Entity<AdvertisementCompanyType>().HasKey(ae => new { ae.AdvertisementID, ae.CompanyTypeID });
 
-            builder.Entity<AdvertisementMajor>().HasKey(am => new { am.AdvertisementID, am.MajorID });
-            builder.Entity<AdvertisementEducationLevel>().HasKey(ae => new { ae.AdvertisementID, ae.EducationLevelID });
-            builder.Entity<AdvertisementCompanyType>().HasKey(ae => new { ae.AdvertisementID, ae.CompanyTypeID });
 
-
-        }
+            }
         public DbSet<JobYub.Models.City> City { get; set; }
         public DbSet<JobYub.Models.Advertisement> Advertisement { get; set; }
         public DbSet<JobYub.Models.CompanyType> CompanyType { get; set; }

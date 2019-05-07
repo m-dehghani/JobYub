@@ -280,10 +280,11 @@ namespace JobYub.Areas.Identity.Pages.Account
 					user.Token = tokenHandler.WriteToken(token);
 					user.VerificationCode = "";
 					await _context.SaveChangesAsync();
-                    
-					////////////////////////////////////////////
-                    
-					OkObjectResult s = new OkObjectResult(new { Token=user.Token,ID=user.Id,Roles = await _userManager.GetRolesAsync(user) });
+
+                    ////////////////////////////////////////////
+                   
+
+                    OkObjectResult s = new OkObjectResult(new { Token=user.Token,ID=user.Id,Roles = await _userManager.GetRolesAsync(user) });
                     return s;
                     
                 }

@@ -16,37 +16,37 @@ namespace JobYub.Controllers
 
     public class ApplicationUserController : ControllerBase
     {
-		private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-		public ApplicationUserController(ApplicationDbContext context)
-		{
-			_context = context;
-		}
+        public ApplicationUserController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
 
-		public class InputModel
-		{
-			//[Required]
-			//[StringLength(11, ErrorMessage = "The must be at least {2} and at max {1} characters long.", MinimumLength = 11)]
-			//[Display(Name = "Mobile")]
-			//public string Mobile { get; set; }
-			[Required]
-			public string PhoneNumber { get; set; }
+        public class InputModel
+        {
+            //[Required]
+            //[StringLength(11, ErrorMessage = "The must be at least {2} and at max {1} characters long.", MinimumLength = 11)]
+            //[Display(Name = "Mobile")]
+            //public string Mobile { get; set; }
+            [Required]
+            public string PhoneNumber { get; set; }
 
-			[StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 0)]
-			public string FirstName { get; set; }
+            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 0)]
+            public string FirstName { get; set; }
 
-			[StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 0)]
-			public string LastName { get; set; }
+            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 0)]
+            public string LastName { get; set; }
 
-			[Url]
-			[StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 0)]
-			public string Website { get; set; }
+            [Url]
+            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 0)]
+            public string Website { get; set; }
 
-			[StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 0)]
-			public string BirthDate { get; set; }
+            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 0)]
+            public string BirthDate { get; set; }
 
-			[StringLength(11, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 0)]
-			public string HomePhone { get; set; }
+            [StringLength(11, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 0)]
+            public string HomePhone { get; set; }
 
             //[Required]
 
@@ -54,66 +54,83 @@ namespace JobYub.Controllers
 
             public string Email { get; set; }
 
-			[MaxLength(6)]
-			public string VerificationCode { get; set; }
+            [MaxLength(6)]
+            public string VerificationCode { get; set; }
 
-			[StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 0)]
-			[DataType(DataType.Password)]
-			public string Password { get; set; }
+            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 0)]
+            [DataType(DataType.Password)]
+            public string Password { get; set; }
 
-			[DataType(DataType.Password)]
-			[Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-			public string ConfirmPassword { get; set; }
+            [DataType(DataType.Password)]
+            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            public string ConfirmPassword { get; set; }
 
-			//register required fields for employee and employer
-			public int? CityID { get; set; }
+            //register required fields for employee and employer
+            public int? CityID { get; set; }
 
-			public int? MajorID { get; set; }
-			
-			public int? MilitaryStatus { get; set; }
-			
-			public int? RegionID { get; set; }
+            public int? MajorID { get; set; }
 
-			[StringLength(1000, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 0)]
-			public string Address { get; set; }
+            public int? MilitaryStatus { get; set; }
 
-			//size: 100k
-			[StringLength(1000000, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 0)]
-			public string Photo { get; set; }
+            public int? RegionID { get; set; }
 
-			//size: 1000k
-			[StringLength(1000000, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 0)]
-			public string Resume { get; set; }
+            [StringLength(1000, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 0)]
+            public string Address { get; set; }
 
-			//register required fields for employer 
-			[StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength =0)]
-			public string Company { get; set; }
-			public int? CompanyTypeID { get; set; }
+            //size: 100k
+            [StringLength(1000000, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 0)]
+            public string Photo { get; set; }
 
-			public double? Latitude { get; set; }
-			
-			public double? longtitude { get; set; }
+            //size: 1000k
+            [StringLength(1000000, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 0)]
+            public string Resume { get; set; }
 
-			//register required fields for employee 
+            //register required fields for employer 
+            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 0)]
+            public string Company { get; set; }
+            public int? CompanyTypeID { get; set; }
 
-			public bool Graduated { get; set; }
+            public double? Latitude { get; set; }
 
-			public int? EducationLevel { get; set; }
+            public double? longtitude { get; set; }
 
-			public int? Experience { get; set; }
+            //register required fields for employee 
 
-			public string ID { get; set; }
+            public bool Graduated { get; set; }
 
-			[StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 0)]
-			public string RawTextResume { get; set; }
+            public int? EducationLevel { get; set; }
 
-			public bool IsPublic { get; set; }
+            public int? Experience { get; set; }
+
+            public string ID { get; set; }
+
+            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 0)]
+            public string RawTextResume { get; set; }
+
+            public bool IsPublic { get; set; }
             public Gender Gender { get; set; }
-                                               //public Advertisement[] ad
+            //public Advertisement[] ad
         }
+        [HttpPost]
+        [Route("/Identity/Account/CheckVersion")]
+        public async Task<IActionResult> CheckVersion(string iosLink, string androidLink, int IosVersion=1, int AndroidVersion=3){
+        switch (IosVersion)
+            {
+                case 1:
+                    iosLink = "https://www.jobino.app";
+                    break;
+            }
+            switch (AndroidVersion)
+            {
+                case 3:
+                    androidLink="https://www.jobino.app";
+                    break;
+            }
 
-        
-		//Edit user profile
+            return Ok(new { Androidlink = androidLink, AndroidVersion = AndroidVersion,iosLink=iosLink,IosVersion=IosVersion });
+
+        }
+        //Edit user profile
         [HttpPut]
 		[Route("/Identity/Account/Edit")]
 		public async Task<IActionResult> EditProfile(InputModel Input)

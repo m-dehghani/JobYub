@@ -11,17 +11,19 @@ using Microsoft.AspNetCore.Authorization;
 using System.Linq.Expressions;
 using Microsoft.Spatial;
 using GeoCoordinatePortable;
+using System.Globalization;
 using Microsoft.AspNetCore.Identity;
 
 namespace JobYub.Controllers
 {
+    
     [Route("api/[controller]")]
     [Authorize]
     [ApiController]
     public class AdvertisementsController : ControllerBase
     {
-       
-        
+        private readonly UserManager<ApplicationUser> _userManager;
+
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _applicationUserManager;
         public AdvertisementsController(ApplicationDbContext context,UserManager<ApplicationUser> userManager)
@@ -45,8 +47,8 @@ namespace JobYub.Controllers
             //adsvertisements=_context.Advertisement.Where(a => a.ApplicationUserID == HttpContext.User.Identity.Name).AsQueryable();
 
             IQueryable<Advertisement> res = _context.Advertisement.Include(s => s.City).Include(s => s.Tarrif).Include(s => s.Region).Include(s => s.AdvertisementMajors).Include(s => s.AdvertisementEducationLevels).OrderBy(s=>s.StartDate);
-            
-            res = User.IsInRole("Administrators") ? res : res.Where(s => s.status == Status.confirmed||s.ApplicationUserID==User.Identity.Name);
+            var roles = await _applicationUserManager.GetRolesAsync(_context.ApplicationUser.Find(User.Identity.Name));
+            res = roles.Contains("Administrators") ? res : res.Where(s => s.status == Status.confirmed||s.ApplicationUserID==User.Identity.Name);
 
             if (cityId != null && cityId != 0)
                 res = res.Where(a => a.CityID == cityId);
@@ -67,13 +69,14 @@ namespace JobYub.Controllers
             // result = await result.FirstOrDefaultAsync(a => a.ID == id);
 
             var advertisement = await result.FirstOrDefaultAsync(a => a.ID == id);
-            if((advertisement.ApplicationUserID == User.Identity.Name|| User.IsInRole("Adminstrators")) && advertisement!=null)
+            var roles = await _applicationUserManager.GetRolesAsync(_context.ApplicationUser.Find(User.Identity.Name));
+            if ((advertisement.ApplicationUserID == User.Identity.Name|| roles.Contains("Administrators")) && advertisement!=null)
             {
 
                 return advertisement;
             }
 
-            else if (!User.IsInRole("Adminstrators") && (advertisement.status==Status.confirmed) && advertisement != null)
+            else if (!roles.Contains("Administrators") && (advertisement.status==Status.confirmed) && advertisement != null)
             {
 
                 return advertisement;
@@ -114,8 +117,8 @@ namespace JobYub.Controllers
            // ApplicationUser u = _context.ApplicationUser.Where(h => h.Id == User.Identity.Name).Include(g => g.Advertisements).FirstOrDefault();
             if (adInDb == null)
                 return NotFound();
-
-            if (!User.IsInRole("Administrators"))
+            var roles = await _applicationUserManager.GetRolesAsync(_context.ApplicationUser.Find(User.Identity.Name));
+            if (!roles.Contains("Administrators"))
             {
               
                 if ( adInDb.ApplicationUserID != User.Identity.Name)
@@ -214,8 +217,8 @@ namespace JobYub.Controllers
         {
             var advertisement = await _context.Advertisement.FindAsync(id);
             ApplicationUser u = _context.ApplicationUser.Find(User.Identity.Name);
-            
-                if (advertisement == null||(!u.Advertisements.Contains(advertisement)&&!User.IsInRole("Administrators")))
+            var roles = await _applicationUserManager.GetRolesAsync(_context.ApplicationUser.Find(User.Identity.Name));
+            if (advertisement == null||(!u.Advertisements.Contains(advertisement)&&!roles.Contains("Administrators")))
             {
                 return NotFound();
             }
@@ -235,8 +238,7 @@ namespace JobYub.Controllers
         [HttpPost]
         [Route("/Advertisements/search")]
         public async Task<IActionResult> SearchAsync(AdvertisementSearchModel model, int page = 1 ,string orderBy="date")
-        {
-               
+        {  
             //IQueryable<Advertisement> res = _context.Advertisement;
 
             var query = _context.Advertisement.Where(a=>a.status==Status.confirmed).Include(s => s.City).Include(s => s.Tarrif).Include(s => s.Region).Include(s => s.AdvertisementMajors).Include(s => s.AdvertisementEducationLevels).Include(a => a.AdvertisementCompanyTypes).ThenInclude(ac => ac.CompanyType).AsQueryable();
@@ -283,8 +285,8 @@ namespace JobYub.Controllers
             {
 				query = query.Where(a => a.AdvertisementMajors.Where(am =>model.MajorIDs.Contains(am.MajorID)).Count() != 0);
 			}         
-            if (model.Experience != null)
-                query = query.Where(a => a.Experience >= model.Experience);
+            if (model.minExperience != null&&model.maxExperience!=null)
+                query = query.Where(a => a.Experience >= model.minExperience&&a.Experience<=model.maxExperience);
             
             if (model.KeyWord != null)
                 query = query.Where(a => a.Title.Contains(model.KeyWord) || a.Description.Contains(model.KeyWord));
@@ -360,7 +362,11 @@ namespace JobYub.Controllers
                 foreach (int id in advertisementIDs.AdvertisementIDs)
 				{
 					var advertisement = await _context.Advertisement.FindAsync(id);
-					if(advertisement!=null) advertisement.status = Status.confirmed;
+                    var now = DateTime.Now; PersianCalendar pc = new PersianCalendar();var Date = string.Format("{0}/{1}/{2}-{3}:{4}:{5}", pc.GetYear(now), pc.GetMonth(now), pc.GetDayOfMonth(now), pc.GetHour(now), pc.GetMinute(now), pc.GetSecond(now));
+                    var StartDate = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                    advertisement.StartDate = StartDate;
+
+                    if (advertisement!=null) advertisement.status = Status.confirmed;
 				}
 				await _context.SaveChangesAsync();
 				return Ok();

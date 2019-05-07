@@ -121,7 +121,8 @@ namespace JobYub.Models
         public string City { get; set; }
         public int? JobCategoryID { get; set; }
         public AdvertisementType? AdvertisementType { get; set; }
-        public int? Experience { get; set; }
+        public int? minExperience { get; set; }
+        public int? maxExperience { get; set; }
         public CollaborationType? CollaborationType { get; set; }
         public int? MinSalary { get; set; }
         public int? MaxSalary { get; set; }
