@@ -27,7 +27,7 @@ namespace JobYub.Controllers
         {
             return await _context.Province.ToListAsync();
         }
-
+		
         // GET: api/Provinces/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Province>> GetProvince(int id)
